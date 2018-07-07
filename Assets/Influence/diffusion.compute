@@ -1,0 +1,113 @@
+﻿// http://cheneyshen.com/directcompute-tutorial-for-unity-buffers/
+// http://cheneyshen.com/directcompute-tutorial-for-unity-append-buffers/
+// http://cheneyshen.com/directcompute-tutorial-for-unity-consume-buffers/
+// http://cheneyshen.com/directcompute-tutorial-for-unity-counter-buffers/
+// calculates vector flow and influence grid diffusion
+// 2018/01/24 added obstacle vector flow
+
+#pragma kernel CSMain
+
+//Texture2D<half4> emitters;
+//Texture2D<int> obstacles;
+// switching to flat arrays
+
+StructuredBuffer<float4> emitters;
+StructuredBuffer<float> obstacles;
+
+
+Texture2D<half4> buffer;
+RWTexture2D<half4> tex;
+RWStructuredBuffer<float2> direction1, direction2, direction3, direction4;//, obstacleDirection;
+
+half4 decay, momentum;
+//half probability;
+
+//float UVRandom(half2 uv)
+//{
+//    return frac(sin(dot(uv, half2(12.9898, 78.233))) * 43758.5453);
+//}
+int w,h;
+
+[numthreads(4,4,1)]
+void CSMain (uint2 i : SV_DispatchThreadID)
+{
+//	half w,h;
+//	tex.GetDimensions(w,h);
+	//half rnd = step(UVRandom(half2(id.x/w, id.y/h)),probability);
+	half4 value = 0
+	//	+ trail*tex[i]
+		+ momentum*(
+		+ buffer[uint2(i.x,i.y+1)]
+		+ buffer[uint2(i.x,i.y-1)]
+		+ buffer[uint2(i.x+1,i.y)]
+		+ buffer[uint2(i.x-1,i.y)]
+		+ buffer[uint2(i.x+1,i.y+1)]*.6
+		+ buffer[uint2(i.x+1,i.y-1)]*.6
+		+ buffer[uint2(i.x-1,i.y+1)]*.6
+		+ buffer[uint2(i.x-1,i.y-1)]*.6
+		)/6.4
+		;
+	value = lerp(value, 0, decay);
+	value += emitters[i.x+i.y*w];
+	value *= (1-obstacles[i.x+i.y*w]);
+	tex[i] = value;
+	
+	//obstacle vector flow
+/*
+	obstacleDirection[i.x+i.y*w] = -( 
+		obstacles[i.x+2+i.y*w]*half2(1,0)
+		+ obstacles[i.x-2+(i.y)*w]*half2(-1,0)
+		+ obstacles[i.x+2+(i.y+2)*w]*half2(1,1)
+		+ obstacles[i.x-2+(i.y+2)*w]*half2(-1,1)
+		+ obstacles[i.x+2+(i.y-2)*w]*half2(1,-1)
+		+ obstacles[i.x-2+(i.y-2)*w]*half2(-1,-1)
+		+ obstacles[i.x+(i.y+2)*w]*half2(0,1)
+		+ obstacles[i.x+(i.y-2)*w]*half2(0,-1)
+	);
+*/
+
+	// direction
+	direction1[i.x+i.y*w] = -( 
+		tex[uint2(i.x+1,i.y)].x*half2(1,0)
+		+ tex[uint2(i.x-1,i.y)].x*half2(-1,0)
+		+ tex[uint2(i.x+1,i.y+1)].x*half2(1,1)
+		+ tex[uint2(i.x-1,i.y+1)].x*half2(-1,1)
+		+ tex[uint2(i.x+1,i.y-1)].x*half2(1,-1)
+		+ tex[uint2(i.x-1,i.y-1)].x*half2(-1,-1)
+		+ tex[uint2(i.x,i.y+1)].x*half2(0,1)
+		+ tex[uint2(i.x,i.y-1)].x*half2(0,-1)
+	);
+
+	direction2[i.x+i.y*w] = -( 
+		tex[uint2(i.x+1,i.y)].y*half2(1,0)
+		+ tex[uint2(i.x-1,i.y)].y*half2(-1,0)
+		+ tex[uint2(i.x+1,i.y+1)].y*half2(1,1)
+		+ tex[uint2(i.x-1,i.y+1)].y*half2(-1,1)
+		+ tex[uint2(i.x+1,i.y-1)].y*half2(1,-1)
+		+ tex[uint2(i.x-1,i.y-1)].y*half2(-1,-1)
+		+ tex[uint2(i.x,i.y+1)].y*half2(0,1)
+		+ tex[uint2(i.x,i.y-1)].y*half2(0,-1)
+		);
+
+	direction3[i.x+i.y*w] = -( 
+		tex[uint2(i.x+1,i.y)].z*half2(1,0)
+		+ tex[uint2(i.x-1,i.y)].z*half2(-1,0)
+		+ tex[uint2(i.x+1,i.y+1)].z*half2(1,1)
+		+ tex[uint2(i.x-1,i.y+1)].z*half2(-1,1)
+		+ tex[uint2(i.x+1,i.y-1)].z*half2(1,-1)
+		+ tex[uint2(i.x-1,i.y-1)].z*half2(-1,-1)
+		+ tex[uint2(i.x,i.y+1)].z*half2(0,1)
+		+ tex[uint2(i.x,i.y-1)].z*half2(0,-1)
+		);
+
+	direction4[i.x+i.y*w] = -(
+		 tex[uint2(i.x+1,i.y)].w*half2(1,0)
+		+ tex[uint2(i.x-1,i.y)].w*half2(-1,0)
+		+ tex[uint2(i.x+1,i.y+1)].w*half2(1,1)
+		+ tex[uint2(i.x-1,i.y+1)].w*half2(-1,1)
+		+ tex[uint2(i.x+1,i.y-1)].w*half2(1,-1)
+		+ tex[uint2(i.x-1,i.y-1)].w*half2(-1,-1)
+		+ tex[uint2(i.x,i.y+1)].w*half2(0,1)
+		+ tex[uint2(i.x,i.y-1)].w*half2(0,-1)
+		);
+}

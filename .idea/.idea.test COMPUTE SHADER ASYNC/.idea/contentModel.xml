@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="C:\Users\laurent\.Rider2017.3\system\resharper-host\local\Transient\ReSharperHost\v11\SolutionCaches\_test COMPUTE SHADER ASYNC.1927964428.00" t="ExcludeRecursive" />
+    <e p="D:\PROJECTS\test COMPUTE SHADER ASYNC" t="IncludeRecursive">
+      <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
+      <e p="Assets" t="Include">
+        <e p="compute shader bluring" t="Include">
+          <e p="DiffusionComputeShader.cs" t="Include" />
+          <e p="test diffusion.compute" t="Include" />
+        </e>
+        <e p="Geometry Shaders" t="Include">
+          <e p="Extrude.shader" t="Include" />
+        </e>
+        <e p="Influence" t="Include">
+          <e p="DataServer.cs" t="Include" />
+          <e p="diffusion champandar.compute" t="Include" />
+          <e p="diffusion.compute" t="Include" />
+          <e p="DiffusionSettings.cs" t="Include" />
+          <e p="DirectionFlow.cs" t="Include" />
+          <e p="Emitter.cs" t="Include" />
+          <e p="InfluenceCompute.cs" t="Include" />
+          <e p="InfluenceJob.cs" t="Include" />
+          <e p="InfluenceReader.cs" t="Include" />
+          <e p="Obstacle.cs" t="Include" />
+          <e p="Simulation.cs" t="Include" />
+          <e p="WaterSurface.shader" t="Include" />
+        </e>
+        <e p="Move.cs" t="Include" />
+        <e p="render texture GL bluring" t="Include">
+          <e p="DiffusionGL.cs" t="Include" />
+          <e p="Diffusor.shader" t="Include" />
+          <e p="test diffusion.compute" t="Include" />
+        </e>
+      </e>
+      <e p="obj" t="ExcludeRecursive" />
+      <e p="packages" t="ExcludeRecursive" />
+      <e p="Temp\bin" t="ExcludeRecursive" />
+      <e p="test COMPUTE SHADER ASYNC.sln" t="IncludeFlat" />
+    </e>
+  </component>
+</project>

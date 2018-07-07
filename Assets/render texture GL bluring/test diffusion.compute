@@ -1,0 +1,39 @@
+﻿// http://cheneyshen.com/directcompute-tutorial-for-unity-buffers/
+// http://cheneyshen.com/directcompute-tutorial-for-unity-append-buffers/
+// http://cheneyshen.com/directcompute-tutorial-for-unity-consume-buffers/
+// http://cheneyshen.com/directcompute-tutorial-for-unity-counter-buffers/
+
+#pragma kernel CSMain
+
+Texture2D<half4> emitters;
+Texture2D<int> obstacles;
+
+RWTexture2D<half4> tex;
+half atten, diffusion;
+half probability;
+
+float UVRandom(half2 uv)
+{
+    return frac(sin(dot(uv, half2(12.9898, 78.233))) * 43758.5453);
+}
+
+[numthreads(8,8,1)]
+void CSMain (uint2 id : SV_DispatchThreadID)
+{
+	half w,h;
+	tex.GetDimensions(w,h);
+	half rnd = step(UVRandom(half2(id.x/w, id.y/h)),probability);
+	half4 value =
+		tex[id]
+		+ (tex[uint2(id.x,id.y+1)]
+		+ tex[uint2(id.x,id.y-1)]
+		+ tex[uint2(id.x+1,id.y)]
+		+ tex[uint2(id.x-1,id.y)]
+		)/5*diffusion
+		;
+	value = lerp(value, 0, atten);
+//	value += half4(rnd,rnd,rnd,rnd);
+	value += emitters[id];
+//	value *= (1-obstacles[uint2(id.x, id.y)]);
+	tex[id] = value;
+}
