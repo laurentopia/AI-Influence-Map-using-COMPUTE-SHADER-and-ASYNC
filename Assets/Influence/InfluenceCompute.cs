@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Collections;
 using UnityEngine.Experimental.Rendering;
+using UnityEngine.Rendering;
 
 // 2018/01/24 added obstacle vector flow
 

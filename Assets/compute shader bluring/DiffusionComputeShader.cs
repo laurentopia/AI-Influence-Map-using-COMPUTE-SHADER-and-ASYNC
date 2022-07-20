@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Experimental.Rendering;
 using Unity.Collections;
 using Unity.Jobs;
+using UnityEngine.Rendering;
 
 public class DiffusionComputeShader : MonoBehaviour
 {
